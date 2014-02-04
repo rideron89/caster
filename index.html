@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #stop_casting {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+
+        #stop_casting button {
+            line-height: 2.5em;
+        }
+
+        .step_label {
+            line-height: 50px;
+            color: rgba(0, 0, 0, 0.5);
+            transition: color 0.6s;
+        }
+
+        .step_label.active {
+            color: rgba(0, 0, 0, 1.0);
+        }
+
+        .step_label img {
+            display: none;
+            vertical-align: middle;
+            width: 50px;
+            height: 50px;
+        }
+
+        .step {
+            line-height: 40px;
+            display: none;
+        }
+
+        .step button {
+            line-height: 2.5em;
+        }
+
+        .step img.loader {
+            display: none;
+            width: 16px;
+            height: 11px;
+            vertical-align: middle;
+        }
+
+        .media_control img {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        #playpause img {
+        }
+
+        #seek {
+            vertical-align: middle;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- STOP CASTING -->
+        <div id="stop_casting">
+            <button onclick="stopApp()">
+                Stop Casting
+            </button>
+        </div>
+    <!-- /STOP CASTING -->
+
+    <!-- STEP ONE -->
+    <h1 id="step_1_label" class="step_label">
+        Step 1: Connect to your Chromecast
+        <img class="check" width="50px" height="50px" src="images/checkmark.png" />
+        <img class="x" width="50px" height="50px" src="images/xmark.png" />
+    </h1>
+    <div id="step_1" class="step">
+        <button onclick="launchApp()">
+            Connect to Chromecast!
+            <img class="loader" width="16px" height="11px" src="images/loader.gif" />
+        </button>
+    </div>
+    <!-- /STEP ONE -->
+
+    <!-- STEP TWO -->
+    <h1 id="step_2_label" class="step_label">
+        Step 2: Select the media you wish to play
+        <img class="check" width="50px" height="50px" src="images/checkmark.png" />
+        <img class="x" width="50px" height="50px" src="images/xmark.png" />
+    </h1>
+    <div id="step_2" class="step">
+        <select id="media_select">
+            <option value="http://192.168.1.23/videos/Sherlock.3x01.The.Empty.Hearse.720p.HDTV.x264-FoV.webm">
+                Sherlock 03x01 - The Empty Hearse (720p)
+            </option>
+            <option value="http://commondatastorage.googleapis.com/gtv-videos-bucket/big_buck_bunny_1080p.mp4">
+                Big Buck Bunny
+            </option>
+            <option value="http://commondatastorage.googleapis.com/gtv-videos-bucket/ED_1280.mp4">
+                Elephant's Dream
+            </option>
+            <option value="http://commondatastorage.googleapis.com/gtv-videos-bucket/tears_of_steel_1080p.mov">
+                Tears of Steel
+            </option>
+            <option value="http://commondatastorage.googleapis.com/gtv-videos-bucket/reel_2012_1280x720.mp4">
+                Reel
+            </option>
+        </select>
+        <button onclick="loadMedia()">
+            Load Media!
+            <img class="loader" width="16px" height="11px" src="images/loader.gif" />
+        </button>
+    </div>
+    <!-- /STEP TWO -->
+
+    <!-- STEP THREE -->
+    <h1 id="step_3_label" class="step_label">
+        Step 3: Control your Cast!
+        <img class="check" width="50px" height="50px" src="images/checkmark.png" />
+        <img class="x" width="50px" height="50px" src="images/xmark.png" />
+    </h1>
+    <div id="step_3" class="step">
+        <button id="playpause" class="media_control" data-status="playing" onclick="playMedia()">
+            <img src="images/pause.png" width="24px" height="24px" />
+        </button>
+        <button id="rewind" class="media_control" onclick="rewind(10)">
+            <img src="images/rewind.png" width="24px" height="24px" />
+        </button>
+        <input id="seek" type="range" class="media_control" onchange="updateSeek()" onclick="seekVideo()" />
+        <button id="forward" class="media_control" onclick="forward(10);">
+            <img src="images/forward.png" width="24px" height="24px" />
+        </button>
+        <span id="timeleft"></span>
+        <br /><br />
+        <button id="stop" class="media_control" onclick="stopMedia()">
+            <img src="images/stop.png" width="24px" height="24px" />
+        </button>
+        Stop to select another video
+    </div>
+    <!-- /STEP THREE -->
+
+    <br /><br />
+    <br /><br />
+    <div id="todo">
+        <h5>ToDo List:</h5>
+        <ol>
+            <li>Activate Step 1 on page load if necessary</li>
+            <li>Add volume controls</li>
+        </ol>
+    </div>
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="media.js"></script>
+    <script type="text/javascript" src="step.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            INTERVAL_ID = window.setInterval(updateSeekPosition, 1000);
+            step1Activate();
+            tryToLoadCast();
+        });
+    </script>
+</body>
+</html>
