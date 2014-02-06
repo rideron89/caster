@@ -3,6 +3,9 @@ var MEDIA_SESSION = null;
 var INTERVAL_ID = -1;
 var SEEKING = false;
 
+/**
+ * retrieve a media status update and note it's position
+ */
 function updateSeekPosition() {
     if (!MEDIA_SESSION) return false;
 
@@ -31,10 +34,16 @@ function updateSeekPosition() {
     $("#timeleft").html(timeleft_str);
 }
 
+/**
+ * called when the seek slider is in use
+ */
 function updateSeek() {
     SEEKING = true;
 }
 
+/**
+ * seek the media to a specific place
+ */
 function seekVideo() {
     var seekTo = $("#seek").val();
 
@@ -51,6 +60,9 @@ function seekVideo() {
     );
 }
 
+/**
+ * rewind through the media
+ */
 function rewind(sec) {
     if (!MEDIA_SESSION) return false;
 
@@ -68,6 +80,9 @@ function rewind(sec) {
     );
 }
 
+/**
+ * fast-forward through the media
+ */
 function forward(sec) {
     if (!MEDIA_SESSION) return false;
 
@@ -108,7 +123,7 @@ function onMediaDiscovered(how, mediaSession) {
  * callback on media loading error
  */
 function onMediaError(e) {
-    console.log("media error");
+    console.log("Unable to load media '" + MEDIA_URL + "'");
     step2Error();
 }
 
@@ -137,10 +152,20 @@ function mediaCommandSuccessCallback(info) {
 function loadMedia() {
     if (!SESSION) {
         step1Error();
+        return false;
+    }
+
+    if ($("input[name=url_radio]:checked").val() === "generic_url")
+        MEDIA_URL = $("#step_2 #media_select").val();
+    else if ($("input[name=url_radio]:checked").val() === "custom_url")
+        MEDIA_URL = $("#custom_url").val();
+    
+    if (MEDIA_URL === "") {
+        step2Error();
+        return false;
     }
 
     $("#step_2 .loader").show();
-    MEDIA_URL = $("#step_2 #media_select").val();
 
     var mediaInfo = new chrome.cast.media.MediaInfo(MEDIA_URL);
     mediaInfo.contentType = "video/mp4";

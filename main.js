@@ -5,14 +5,16 @@ var SESSION = null;
  * initialization success callback
  */
 function onInitSuccess() {
-    console.log("init success");
+    if (!SESSION)
+        step1Activate();
 }
 
 /**
  * initialization failure callback
  */
 function onInitError() {
-    console.log("error during init");
+    if (!SESSION)
+        step1Error();
 }
 
 /**
@@ -33,10 +35,8 @@ function onStopAppSuccess() {
  * receiver listener during initialization
  */
 function receiverListener(e) {
-    if (e === "available") {
-        console.log("receiver available");
-    } else {
-        console.log("receiver unavailable");
+    if (e !== "available") {
+        console.log("Unable to initialize receiver!");
     }
 }
 
@@ -76,7 +76,6 @@ function sessionUpdateListener(isAlive) {
  * callback on success for requestSession call
  */
 function onRequestSessionSuccess(e) {
-    console.log("session success: " + e.sessionId);
     SESSION = e;
 
     step1Complete();
@@ -115,12 +114,9 @@ function stopApp() {
  */
 function tryToLoadCast() {
     if ((!chrome.cast || !chrome.cast.isAvailable) && TIMEOUT > 0) {
-        console.log("not ready to cast..." + TIMEOUT + " seconds to timeout");
         TIMEOUT -= 1;
         setTimeout(tryToLoadCast, 1000);
         return false;
-    } else {
-        console.log("ready to cast");
     }
 
     var app_id = chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID;
